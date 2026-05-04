@@ -1,5 +1,5 @@
 🚛 Logistics Router - Agentic Supply Chain Orchestrator
-Veloq is a high-performance logistics platform designed to solve visibility gaps in enterprise-scale shipping. Built with a focus on speed, reliability, and AI-driven orchestration, it serves as a bridge between complex global freight and seamless last-mile delivery.
+It is a high-performance logistics platform designed to solve visibility gaps in enterprise-scale shipping. Built with a focus on speed, reliability, and AI-driven orchestration, it serves as a bridge between complex global freight and seamless last-mile delivery.
 
 🚀 Key Features
 AI-Enhanced Quote Engine: Simulated agentic routing that calculates the fastest and most eco-friendly paths for cargo.
