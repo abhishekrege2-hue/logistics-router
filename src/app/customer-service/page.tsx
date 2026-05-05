@@ -49,11 +49,11 @@ export default function CustomerServicePage() {
           {[
             {
               title: "Global Support",
-              text: "support@logistics-router.com | +1-800-ROUTER (24/7).",
+              text: "support@meridian-scm.com | +1-800-ROUTER (24/7).",
             },
             {
               title: "India Regional Hub",
-              text: "support.in@logistics-router.com | +91-20-XXXX-XXXX (9 AM - 6 PM IST).",
+              text: "support.in@meridian-scm.com | +91-20-XXXX-XXXX (9 AM - 6 PM IST).",
             },
             {
               title: "Technical Desk",

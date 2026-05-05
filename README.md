@@ -1,4 +1,4 @@
-🚛 Logistics Router - Agentic Supply Chain Orchestrator
+🚛 Meridian SCM - Agentic Supply Chain Orchestrator
 It is a high-performance logistics platform designed to solve visibility gaps in enterprise-scale shipping. Built with a focus on speed, reliability, and AI-driven orchestration, it serves as a bridge between complex global freight and seamless last-mile delivery.
 
 🚀 Key Features

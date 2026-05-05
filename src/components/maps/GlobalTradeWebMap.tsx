@@ -1,6 +1,7 @@
 "use client";
 
 import { geoMercator, geoPath, type GeoProjection } from "d3-geo";
+import type { Feature, Geometry } from "geojson";
 import { feature } from "topojson-client";
 import { useEffect, useMemo, useState } from "react";
 
@@ -134,7 +135,7 @@ function arcPath(
 export function GlobalTradeWebMap({ heightClassName = "h-[28rem]" }: Props) {
   const [hoveredHubName, setHoveredHubName] = useState<string | null>(null);
   const [hoveredLaneKey, setHoveredLaneKey] = useState<string | null>(null);
-  const [countries, setCountries] = useState<any[]>([]);
+  const [countries, setCountries] = useState<Feature<Geometry>[]>([]);
 
   const hubsByName = useMemo(
     () => Object.fromEntries(HUBS.map((h) => [h.city, h])),
@@ -171,8 +172,10 @@ export function GlobalTradeWebMap({ heightClassName = "h-[28rem]" }: Props) {
       .then((res) => res.json())
       .then((topology) => {
         if (!active) return;
-        const geo = feature(topology, topology.objects.countries);
-        setCountries((geo as any).features ?? []);
+        const topologyObj = topology as { objects: { countries: object } };
+        const geo = feature(topologyObj as object, topologyObj.objects.countries);
+        const features = (geo as { features?: Feature<Geometry>[] }).features ?? [];
+        setCountries(features);
       })
       .catch(() => setCountries([]));
     return () => {

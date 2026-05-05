@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Shipment } from "@/lib/shipments";
 
-const STORAGE_KEY = "logistics-router:shipments";
+const STORAGE_KEY = "meridian-scm:shipments";
 
 export function useShipmentHistory() {
   const [shipments, setShipments] = useState<Shipment[]>([]);

@@ -1,6 +1,6 @@
 "use client";
 
-const AUTH_KEY = "logistics-router-authenticated";
+const AUTH_KEY = "meridian-scm-authenticated";
 
 export function isAuthenticated() {
   if (typeof window === "undefined") return false;

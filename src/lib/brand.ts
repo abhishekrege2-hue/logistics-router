@@ -6,4 +6,4 @@ export const BRAND_NAME_UPPER = "MERIDIAN SCM";
 export const SITE_TITLE = `${BRAND_NAME} | Smart Route Planning & Supply Chain`;
 
 export const SITE_DESCRIPTION =
-  "Optimize your logistics with intelligent route planning, real-time tracking, and analytics. Enterprise-grade supply chain orchestration.";
+  "Meridian SCM optimizes logistics with intelligent route planning, real-time tracking, and enterprise-grade supply chain orchestration.";
