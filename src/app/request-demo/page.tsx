@@ -25,7 +25,7 @@ export default function RequestDemoPage() {
           className="mt-4 text-base"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          See Logistics Router in action. Fill in your details and our team will
+          See Meridian SCM in action. Fill in your details and our team will
           reach out within 24 hours.
         </p>
         <div className="mt-10">

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { Leaf, Loader2, Plane, Ship, Train } from "lucide-react";
+import { ROUTING_LOCATIONS } from "@/lib/hubs";
 
 type QuotePhase = "idle" | "loading" | "results";
 
@@ -11,12 +12,48 @@ const CARGO_TYPES = [
   { value: "hazmat", label: "Hazmat" },
 ] as const;
 
+type Unit = "kg" | "lbs" | "tons";
+type ServiceTier = "ocean" | "air";
+
+function toKg(value: number, unit: Unit) {
+  if (unit === "lbs") return value * 0.453592;
+  if (unit === "tons") return value * 1000;
+  return value;
+}
+
 export function GetAQuoteContent() {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
-  const [weightKg, setWeightKg] = useState("");
+  const [weight, setWeight] = useState("");
+  const [unit, setUnit] = useState<Unit>("kg");
   const [cargoType, setCargoType] = useState<string>("general");
+  const [serviceTier, setServiceTier] = useState<ServiceTier>("ocean");
+  const [premiumHandling, setPremiumHandling] = useState(false);
   const [phase, setPhase] = useState<QuotePhase>("idle");
+
+  const originChoices = useMemo(
+    () =>
+      ROUTING_LOCATIONS.filter((city) =>
+        city.toLowerCase().includes(origin.trim().toLowerCase()),
+      ).slice(0, 5),
+    [origin],
+  );
+  const destinationChoices = useMemo(
+    () =>
+      ROUTING_LOCATIONS.filter((city) =>
+        city.toLowerCase().includes(destination.trim().toLowerCase()),
+      ).slice(0, 5),
+    [destination],
+  );
+
+  const normalizedWeightKg = useMemo(
+    () => toKg(Number.parseFloat(weight || "0"), unit),
+    [weight, unit],
+  );
+  const surchargeMultiplier = serviceTier === "air" || premiumHandling ? 1.35 : 1;
+  const oceanBase = Math.max(220, normalizedWeightKg * 0.55);
+  const airBase = Math.max(680, normalizedWeightKg * 1.35);
+  const hybridBase = Math.max(420, normalizedWeightKg * 0.9);
 
   const handleCalculate = (e: FormEvent) => {
     e.preventDefault();
@@ -34,7 +71,7 @@ export function GetAQuoteContent() {
           color: "var(--color-primary)",
         }}
       >
-        Agentic Quote Generator
+        AI Routing Quote Engine
       </h1>
       <p
         className="mt-3 max-w-2xl text-base font-medium"
@@ -66,14 +103,30 @@ export function GetAQuoteContent() {
               >
                 Origin (City / Port)
               </label>
-              <input
-                id="quote-origin"
-                value={origin}
-                onChange={(e) => setOrigin(e.target.value)}
-                className="input-control min-h-[44px] w-full px-4 py-3 text-sm"
-                placeholder="e.g. Mumbai Nhava Sheva"
-                autoComplete="off"
-              />
+              <div className="relative">
+                <input
+                  id="quote-origin"
+                  value={origin}
+                  onChange={(e) => setOrigin(e.target.value)}
+                  className="input-control min-h-[44px] w-full px-4 py-3 text-sm"
+                  placeholder="e.g. Mumbai (BOM)"
+                  autoComplete="off"
+                />
+                {origin.trim().length > 0 && (
+                  <div className="surface-card absolute z-20 mt-1 w-full rounded-md border p-1">
+                    {originChoices.map((choice) => (
+                      <button
+                        key={choice}
+                        type="button"
+                        onClick={() => setOrigin(choice)}
+                        className="block w-full rounded-[4px] px-2 py-2 text-left text-xs font-medium hover:bg-[color:var(--color-bg)]"
+                      >
+                        {choice}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <label
@@ -83,34 +136,98 @@ export function GetAQuoteContent() {
               >
                 Destination
               </label>
-              <input
-                id="quote-destination"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                className="input-control min-h-[44px] w-full px-4 py-3 text-sm"
-                placeholder="e.g. Rotterdam"
-                autoComplete="off"
-              />
+              <div className="relative">
+                <input
+                  id="quote-destination"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  className="input-control min-h-[44px] w-full px-4 py-3 text-sm"
+                  placeholder="e.g. Rotterdam (RTM)"
+                  autoComplete="off"
+                />
+                {destination.trim().length > 0 && (
+                  <div className="surface-card absolute z-20 mt-1 w-full rounded-md border p-1">
+                    {destinationChoices.map((choice) => (
+                      <button
+                        key={choice}
+                        type="button"
+                        onClick={() => setDestination(choice)}
+                        className="block w-full rounded-[4px] px-2 py-2 text-left text-xs font-medium hover:bg-[color:var(--color-bg)]"
+                      >
+                        {choice}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <label
                 htmlFor="quote-weight"
-                className="mb-1.5 block text-sm font-semibold"
+                className="mb-1.5 block text-sm font-semibold sm:col-span-3"
                 style={{ color: "var(--color-text-primary)" }}
               >
-                Weight (kg)
+                Weight
               </label>
               <input
                 id="quote-weight"
                 type="number"
                 min={0}
                 step="0.1"
-                value={weightKg}
-                onChange={(e) => setWeightKg(e.target.value)}
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
                 className="input-control min-h-[44px] w-full px-4 py-3 text-sm"
                 placeholder="0"
               />
+              <button
+                type="button"
+                className={`rounded-[4px] border px-3 py-2 text-xs font-semibold ${unit === "kg" ? "bg-[color:var(--color-bg)]" : ""}`}
+                onClick={() => setUnit("kg")}
+              >
+                KG
+              </button>
+              <button
+                type="button"
+                className={`rounded-[4px] border px-3 py-2 text-xs font-semibold ${unit === "lbs" ? "bg-[color:var(--color-bg)]" : ""}`}
+                onClick={() => setUnit("lbs")}
+              >
+                LBS
+              </button>
+              <button
+                type="button"
+                className={`rounded-[4px] border px-3 py-2 text-xs font-semibold ${unit === "tons" ? "bg-[color:var(--color-bg)]" : ""}`}
+                onClick={() => setUnit("tons")}
+              >
+                Tons
+              </button>
             </div>
+            <div>
+              <p className="mb-1.5 text-sm font-semibold">Service Tier</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setServiceTier("ocean")}
+                  className={`rounded-[4px] border px-4 py-2 text-sm font-semibold ${serviceTier === "ocean" ? "bg-[color:var(--color-bg)]" : ""}`}
+                >
+                  Standard (Ocean)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setServiceTier("air")}
+                  className={`rounded-[4px] border px-4 py-2 text-sm font-semibold ${serviceTier === "air" ? "bg-[color:var(--color-bg)]" : ""}`}
+                >
+                  Premium (Air)
+                </button>
+              </div>
+            </div>
+            <label className="inline-flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={premiumHandling}
+                onChange={(e) => setPremiumHandling(e.target.checked)}
+              />
+              Premium Handling (+35% estimated pricing uplift)
+            </label>
             <div>
               <label
                 htmlFor="quote-cargo"
@@ -169,7 +286,7 @@ export function GetAQuoteContent() {
               style={{ color: "var(--color-text-secondary)" }}
             >
               Mock estimates for {origin || "your origin"} →{" "}
-              {destination || "your destination"} · {weightKg || "—"} kg ·{" "}
+              {destination || "your destination"} · {weight || "—"} {unit} ·{" "}
               {CARGO_TYPES.find((c) => c.value === cargoType)?.label ??
                 cargoType}
             </p>
@@ -206,7 +323,7 @@ export function GetAQuoteContent() {
                     >
                       2 days ·{" "}
                       <span className="font-semibold text-[color:var(--color-primary)]">
-                        $1,250
+                        ${Math.round(airBase * surchargeMultiplier).toLocaleString()}
                       </span>
                     </p>
                   </div>
@@ -244,7 +361,7 @@ export function GetAQuoteContent() {
                     >
                       18 days ·{" "}
                       <span className="font-semibold text-[color:var(--color-primary)]">
-                        $350
+                        ${Math.round(oceanBase * surchargeMultiplier).toLocaleString()}
                       </span>
                     </p>
                   </div>
@@ -301,7 +418,7 @@ export function GetAQuoteContent() {
                     >
                       12 days ·{" "}
                       <span className="font-semibold text-[color:var(--color-primary)]">
-                        $550
+                        ${Math.round(hybridBase * surchargeMultiplier).toLocaleString()}
                       </span>
                     </p>
                   </div>

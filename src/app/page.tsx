@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -21,6 +22,7 @@ import {
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
+import { GlobalTradeWebMap } from "@/components/maps/GlobalTradeWebMap";
 import { BRAND_NAME } from "@/lib/brand";
 
 interface FeatureItem {
@@ -106,13 +108,13 @@ function AlternatingSplitSection({
           </div>
         ))}
       </div>
-      <a
+      <Link
         href={ctaHref}
         className="btn-primary mt-8 inline-flex items-center gap-2 px-6 py-3"
       >
         {cta}
         <ArrowRight className="h-4 w-4" aria-hidden />
-      </a>
+      </Link>
     </div>
   );
 
@@ -168,12 +170,31 @@ export default function Home() {
               measures emerge. Our AI Orchestrator is committed to helping you
               navigate these changes.
             </p>
-            <button
-              type="button"
-              className="btn-primary min-h-[44px] shrink-0 px-5 py-2.5 text-sm"
+            <Link
+              href="/solutions/ai"
+              className="btn-primary inline-flex min-h-[44px] shrink-0 items-center px-5 py-2.5 text-sm"
             >
               Explore AI Solutions
-            </button>
+            </Link>
+          </div>
+        </section>
+
+        <section
+          id="global-network"
+          className="border-b px-4 py-14 sm:px-6 lg:px-8"
+          style={{ borderColor: "var(--color-border)", backgroundColor: "#0f172a" }}
+        >
+          <div className="mx-auto max-w-7xl">
+            <h2 className="border-l-4 pl-4 text-3xl font-bold text-white sm:text-4xl" style={{ borderColor: "var(--color-accent)" }}>
+              The Meridian Global Network: Orchestrating Trade at Scale.
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm font-medium text-slate-300">
+              Active trade corridors from Pune and Mumbai gateways to Rotterdam and Denmark hubs, optimized for lead-time and carbon efficiency.
+            </p>
+
+            <div className="mt-6">
+              <GlobalTradeWebMap />
+            </div>
           </div>
         </section>
 
@@ -188,7 +209,7 @@ export default function Home() {
             imageSrc="https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=1200&auto=format&fit=crop"
             imageAlt="Logistics delivery with customer signing on a digital pad"
             cta="Explore Express."
-            ctaHref="#"
+            ctaHref="/services/express"
             features={[
               { label: "Next possible business day", icon: CalendarClock },
               { label: "Tailored business solutions", icon: BriefcaseBusiness },
@@ -221,7 +242,7 @@ export default function Home() {
             imageSrc="https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=1200&auto=format&fit=crop"
             imageAlt="Supply chain managers in a modern warehouse in discussion"
             cta="Explore Global Forwarding."
-            ctaHref="#"
+            ctaHref="/services/forwarding"
             features={[
               { label: "Air Freight", icon: Plane },
               { label: "Ocean Freight", icon: Ship },
@@ -242,7 +263,7 @@ export default function Home() {
             imageSrc="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=1200&auto=format&fit=crop"
             imageAlt="Two warehouse workers with advanced packing trolleys"
             cta="Explore Supply Chain 3PL."
-            ctaHref="#"
+            ctaHref="/services/3pl"
             featureGridClass="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3"
             features={[
               { label: "Warehousing", icon: Warehouse },
@@ -291,12 +312,12 @@ export default function Home() {
                 world-class shipping. Our team of experts helps address
                 ever-changing needs.
               </p>
-              <button
-                type="button"
-                className="btn-primary mt-6 min-h-[44px] px-6 py-3"
+              <Link
+                href="/solutions/business"
+                className="btn-primary mt-6 inline-flex min-h-[44px] items-center px-6 py-3"
               >
                 Explore Business Solutions
-              </button>
+              </Link>
             </div>
 
             <div className="surface-card rounded-lg p-6 sm:p-8">
@@ -323,21 +344,33 @@ export default function Home() {
                   <span style={{ color: "var(--color-accent)" }} aria-hidden>
                     •
                   </span>
-                  Operational Update: Middle East
+                  <Link href="/updates/middle-east-operational-update" className="underline-offset-2 hover:underline">
+                    Operational Update: Middle East
+                  </Link>
                 </li>
                 <li className="flex gap-2">
                   <span style={{ color: "var(--color-accent)" }} aria-hidden>
                     •
                   </span>
-                  Sustainability Innovation
+                  <Link href="/updates/sustainability-innovation" className="underline-offset-2 hover:underline">
+                    Sustainability Innovation
+                  </Link>
                 </li>
                 <li className="flex gap-2">
                   <span style={{ color: "var(--color-accent)" }} aria-hidden>
                     •
                   </span>
-                  Globalization holds firm at record levels
+                  <Link href="/updates/global-trade-lane-outlook" className="underline-offset-2 hover:underline">
+                    Globalization holds firm at record levels
+                  </Link>
                 </li>
               </ul>
+              <Link
+                href="/updates"
+                className="mt-5 inline-flex text-sm font-semibold text-[color:var(--color-accent)] underline-offset-2 hover:underline"
+              >
+                View all updates
+              </Link>
             </div>
           </div>
         </section>

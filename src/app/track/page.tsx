@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { TrackPageContent } from "@/components/TrackPageContent";
-import { TrackSubNav } from "@/components/TrackSubNav";
 import { BRAND_NAME, SITE_DESCRIPTION } from "@/lib/brand";
 
 export const metadata: Metadata = {
@@ -20,7 +19,6 @@ export default function TrackPage() {
       }}
     >
       <Header />
-      <TrackSubNav />
       <main>
         <TrackPageContent />
       </main>

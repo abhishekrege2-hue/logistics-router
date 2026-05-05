@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type RefObject,
@@ -19,9 +20,13 @@ import {
   Radar,
   Route,
   Search,
+  UserCircle2,
   X,
+  LogOut,
 } from "lucide-react";
 import { BRAND_NAME } from "@/lib/brand";
+import { COUNTRY_OPTIONS_BY_CONTINENT, type CountryOption } from "@/lib/countries";
+import { isAuthenticated, setAuthenticated } from "@/lib/auth";
 
 type MenuKey = "nexship" | "enterprise" | null;
 
@@ -83,6 +88,11 @@ function useMenuClose(
 
 export function Header() {
   const [marketOpen, setMarketOpen] = useState(false);
+  const [marketQuery, setMarketQuery] = useState("");
+  const [selectedMarket, setSelectedMarket] = useState<CountryOption | null>(
+    null,
+  );
+  const [authed, setAuthed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [menu, setMenu] = useState<MenuKey>(null);
   const nexRef = useRef<HTMLDivElement>(null);
@@ -102,6 +112,25 @@ export function Header() {
   );
 
   useMenuClose(menu, setMenu, nexRef, entRef);
+
+  useEffect(() => {
+    const syncAuth = () => setAuthed(isAuthenticated());
+    syncAuth();
+    window.addEventListener("storage", syncAuth);
+    return () => window.removeEventListener("storage", syncAuth);
+  }, []);
+
+  const filteredByContinent = useMemo(() => {
+    const q = marketQuery.trim().toLowerCase();
+    return Object.entries(COUNTRY_OPTIONS_BY_CONTINENT)
+      .map(([continent, countries]) => ({
+        continent,
+        countries: q
+          ? countries.filter((c) => c.name.toLowerCase().includes(q))
+          : countries,
+      }))
+      .filter((entry) => entry.countries.length > 0);
+  }, [marketQuery]);
 
   useEffect(() => {
     if (!marketOpen) return;
@@ -207,12 +236,12 @@ export function Header() {
                   className="h-3.5 w-3.5"
                   style={{ color: "var(--color-header-text)" }}
                 />
-                India (English)
+                {(selectedMarket?.name ?? "India")} (English)
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
               {marketOpen && (
                 <div
-                  className="surface-card absolute right-0 top-full z-50 mt-2 w-64 rounded-lg border p-3"
+                  className="surface-card absolute right-0 top-full z-50 mt-2 w-[min(96vw,720px)] rounded-lg border p-3"
                   style={{ color: "var(--color-text-primary)" }}
                 >
                   <p
@@ -221,20 +250,40 @@ export function Header() {
                   >
                     Market Selector
                   </p>
-                  <div className="mt-3 grid grid-cols-3 gap-2">
-                    {["A-D", "E-H", "I-L", "M-P", "Q-T", "U-Z"].map((jump) => (
-                      <button
-                        key={jump}
-                        type="button"
-                        className="min-h-[44px] cursor-pointer rounded-[4px] border px-2 py-2 text-xs font-medium transition hover:bg-[color:var(--color-bg)]"
-                        style={{
-                          borderColor: "var(--color-border)",
-                          color: "var(--color-text-primary)",
-                          backgroundColor: "var(--color-surface)",
-                        }}
-                      >
-                        {jump}
-                      </button>
+                  <input
+                    type="text"
+                    value={marketQuery}
+                    onChange={(e) => setMarketQuery(e.target.value)}
+                    placeholder="Search countries"
+                    className="input-control mt-2 w-full px-3 py-2 text-sm"
+                  />
+                  <div className="mt-3 max-h-72 overflow-auto pr-1">
+                    {filteredByContinent.map(({ continent, countries }) => (
+                      <div key={continent} className="mb-3 last:mb-0">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.1em] text-[color:var(--color-text-secondary)]">
+                          {continent}
+                        </p>
+                        <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                          {countries.map((country) => (
+                            <button
+                              key={country.code}
+                              type="button"
+                              onClick={() => {
+                                setSelectedMarket(country);
+                                setMarketOpen(false);
+                              }}
+                              className="min-h-[44px] cursor-pointer rounded-[4px] border px-2 py-2 text-left text-xs font-medium transition hover:bg-[color:var(--color-bg)]"
+                              style={{
+                                borderColor: "var(--color-border)",
+                                color: "var(--color-text-primary)",
+                                backgroundColor: "var(--color-surface)",
+                              }}
+                            >
+                              {country.flag} {country.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -247,16 +296,16 @@ export function Header() {
       <div className={headerBar} style={headerBarStyle}>
         <div className="sub-nav-row mx-auto box-border flex h-12 max-w-7xl items-center justify-between gap-0 px-4 sm:px-6 lg:px-8">
           <Link
-            href="/"
+            href="/command-hub"
             className={`sub-nav-item hidden items-center text-xs font-semibold uppercase tracking-[0.16em] sm:inline-flex ${linkHover}`}
             style={{
               color:
                 "color-mix(in srgb, var(--color-header-text) 88%, transparent)",
             }}
-            aria-label={`${BRAND_NAME} home`}
+            aria-label={`${BRAND_NAME} command hub`}
             onClick={() => setMobileOpen(false)}
           >
-            Agentic Control Tower
+            Meridian Command Hub
           </Link>
 
           <nav
@@ -265,7 +314,7 @@ export function Header() {
           >
             <Link
               href="/track"
-              className={`sub-nav-item cursor-pointer text-sm font-medium ${linkHover}`}
+              className={`sub-nav-item cursor-pointer justify-center text-sm font-medium ${linkHover}`}
             >
               Track
             </Link>
@@ -286,14 +335,14 @@ export function Header() {
             >
               <button
                 type="button"
-                className={`sub-nav-item inline-flex cursor-pointer items-center gap-1 text-sm font-medium ${linkHover}`}
+                className={`sub-nav-item inline-flex cursor-pointer items-center justify-center gap-1 text-sm font-medium ${linkHover}`}
                 aria-expanded={menu === "nexship"}
                 aria-haspopup="true"
                 onClick={() =>
                   setMenu((m) => (m === "nexship" ? null : "nexship"))
                 }
               >
-                Logistics Router
+                Meridian SCM
                 <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
               </button>
               <div
@@ -351,7 +400,7 @@ export function Header() {
             >
               <button
                 type="button"
-                className={`sub-nav-item inline-flex cursor-pointer items-center gap-1 text-sm font-medium ${linkHover}`}
+                className={`sub-nav-item inline-flex cursor-pointer items-center justify-center gap-1 text-sm font-medium ${linkHover}`}
                 aria-expanded={menu === "enterprise"}
                 aria-haspopup="true"
                 onClick={() =>
@@ -386,7 +435,7 @@ export function Header() {
                   >
                     Our supply chain divisions create custom solutions for
                     enterprise-sized organizations. Discover what makes
-                    Logistics Router Supply Chain the perfect fit as your
+                    Meridian SCM Supply Chain the perfect fit as your
                     outsourced logistics provider (3PL).
                   </p>
                   <Link
@@ -395,7 +444,7 @@ export function Header() {
                     style={{ backgroundColor: "var(--color-primary)" }}
                     onClick={() => setMenu(null)}
                   >
-                    Explore Logistics Router Supply Chain
+                    Explore Meridian SCM Supply Chain
                   </Link>
                 </div>
                 <div className="relative hidden min-h-[280px] md:block">
@@ -415,25 +464,45 @@ export function Header() {
             </div>
 
             <Link
-              href="/#customer-service"
-              className={`sub-nav-item cursor-pointer text-sm font-medium ${linkHover}`}
+              href="/customer-service"
+              className={`sub-nav-item cursor-pointer justify-center text-sm font-medium ${linkHover}`}
             >
               Customer Service
             </Link>
           </nav>
 
           <div className="flex h-full items-center gap-3">
-            <Link
-              href="/login"
-              className={`sub-nav-item hidden cursor-pointer items-center rounded-[4px] border-2 text-sm font-semibold transition sm:inline-flex ${linkHover}`}
-              style={{
-                color: "var(--color-header-text)",
-                borderColor: "var(--color-header-divider)",
-                backgroundColor: "transparent",
-              }}
-            >
-              Login
-            </Link>
+            {authed ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthenticated(false);
+                  setAuthed(false);
+                }}
+                className={`sub-nav-item hidden cursor-pointer items-center gap-2 rounded-[4px] border-2 text-sm font-semibold transition sm:inline-flex ${linkHover}`}
+                style={{
+                  color: "var(--color-header-text)",
+                  borderColor: "var(--color-header-divider)",
+                  backgroundColor: "transparent",
+                }}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className={`sub-nav-item hidden cursor-pointer items-center gap-2 rounded-[4px] border-2 text-sm font-semibold transition sm:inline-flex ${linkHover}`}
+                style={{
+                  color: "var(--color-header-text)",
+                  borderColor: "var(--color-header-divider)",
+                  backgroundColor: "transparent",
+                }}
+              >
+                <UserCircle2 className="h-4 w-4" />
+                Login
+              </Link>
+            )}
             <Link
               href="/request-demo"
               className="sub-nav-item hidden cursor-pointer items-center rounded-[4px] text-sm font-bold text-white transition sm:inline-flex"
@@ -492,7 +561,7 @@ export function Header() {
                   className={`min-h-[44px] cursor-pointer px-2 py-3 text-sm font-medium ${linkHover}`}
                   onClick={() => setMobileOpen(false)}
                 >
-                  Logistics Router · {title}
+                  Meridian SCM · {title}
                 </Link>
               ))}
               <Link
@@ -503,7 +572,7 @@ export function Header() {
                 Enterprise Logistics Services
               </Link>
               <Link
-                href="/#customer-service"
+                href="/customer-service"
                 className={`min-h-[44px] cursor-pointer px-2 py-3 text-sm font-medium ${linkHover}`}
                 onClick={() => setMobileOpen(false)}
               >
@@ -513,13 +582,27 @@ export function Header() {
                 className="mt-2 flex flex-col gap-2 border-t pt-3"
                 style={{ borderColor: "var(--color-header-divider)" }}
               >
-                <Link
-                  href="/login"
-                  className={`min-h-[44px] cursor-pointer px-2 py-3 text-sm font-semibold ${linkHover}`}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Login
-                </Link>
+                {authed ? (
+                  <button
+                    type="button"
+                    className={`min-h-[44px] cursor-pointer px-2 py-3 text-left text-sm font-semibold ${linkHover}`}
+                    onClick={() => {
+                      setAuthenticated(false);
+                      setAuthed(false);
+                      setMobileOpen(false);
+                    }}
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    className={`min-h-[44px] cursor-pointer px-2 py-3 text-sm font-semibold ${linkHover}`}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    Login
+                  </Link>
+                )}
                 <Link
                   href="/request-demo"
                   className="min-h-[44px] cursor-pointer rounded-[4px] px-4 py-3 text-center text-sm font-bold text-white"

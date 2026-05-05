@@ -4,6 +4,8 @@ import { ArrowRight } from "lucide-react";
 
 const ctaGridCell =
   "flex min-h-[7.5rem] w-full flex-col justify-center rounded-[4px] px-4 py-5 text-center sm:min-h-[7.75rem]";
+const unifiedCtaBox =
+  "hero-unified-box shadow-card cursor-pointer border-2 border-transparent font-bold";
 
 export function HeroSection() {
   return (
@@ -51,8 +53,7 @@ export function HeroSection() {
             <div className="mt-8 grid w-full max-w-4xl grid-cols-1 gap-4 md:max-w-none md:grid-cols-3 md:gap-4 md:items-stretch">
               <Link
                 href="/start-shipping"
-                className={`${ctaGridCell} shadow-card cursor-pointer font-bold text-white transition hover:opacity-95`}
-                style={{ backgroundColor: "var(--color-accent)" }}
+                className={`${ctaGridCell} ${unifiedCtaBox}`}
               >
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/90">
                   Primary
@@ -61,22 +62,16 @@ export function HeroSection() {
               </Link>
               <Link
                 href="/get-a-quote"
-                className={`hero-outline-cta ${ctaGridCell} cursor-pointer font-bold`}
+                className={`${ctaGridCell} ${unifiedCtaBox}`}
               >
-                <p className="hero-quote-kicker text-xs font-bold uppercase tracking-[0.12em]">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/90">
                   AI Routing
                 </p>
-                <p className="hero-quote-title mt-1 text-lg font-bold">
-                  Get a Quote
-                </p>
+                <p className="mt-1 text-lg font-bold">Get a Quote</p>
               </Link>
               <Link
                 href="/enterprise-app"
-                className={`${ctaGridCell} shadow-card cursor-pointer border-2 border-transparent font-bold transition hover:opacity-95`}
-                style={{
-                  backgroundColor: "var(--color-primary)",
-                  color: "var(--color-header-text)",
-                }}
+                className={`${ctaGridCell} ${unifiedCtaBox}`}
               >
                 <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/90">
                   Enterprise
@@ -88,13 +83,22 @@ export function HeroSection() {
             </div>
 
             <div className="mt-8">
-              <Link
-                href="#features"
-                className="btn-primary inline-flex min-h-[44px] cursor-pointer items-center gap-2 px-6 py-3"
-              >
-                Start Logistics Workflow
-                <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/workflow"
+                  className="hero-unified-box btn-cta-sync inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-[4px] border-2 border-transparent px-6 py-3 font-bold"
+                >
+                  Start Logistics Workflow
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+                <Link
+                  href="/command-hub"
+                  className="hero-unified-box btn-cta-sync inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-[4px] border-2 border-transparent px-6 py-3 font-bold"
+                >
+                  Meridian Command Hub
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

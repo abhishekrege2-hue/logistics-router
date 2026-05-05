@@ -65,8 +65,9 @@ body {
     box-sizing: border-box;
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 100%;
-    padding: 0 20px;
+    padding: 0 16px;
     margin: 0;
     line-height: 1;
     vertical-align: middle;
@@ -180,6 +181,28 @@ body {
     color: #ffffff;
   }
 
+  .hero-unified-box {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.3s ease;
+    box-shadow: var(--color-card-shadow);
+  }
+  .hero-unified-box:hover,
+  .hero-unified-box:active {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: #ffffff;
+  }
+  .hero-unified-box:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
   .input-control {
     background: var(--color-input-bg);
     border: 1px solid var(--color-input-border);
@@ -236,6 +259,27 @@ body {
   .subnav-link-active {
     color: var(--color-accent);
   }
+
+  .btn-cta-sync {
+    box-shadow: var(--color-card-shadow);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+  .btn-cta-sync:hover {
+    box-shadow: 0 12px 24px rgba(26, 43, 74, 0.28);
+    transform: translateY(-2px);
+  }
+  .btn-cta-sync:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 10px rgba(26, 43, 74, 0.24);
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: #ffffff;
+  }
 }
 
 @keyframes dash {
@@ -247,4 +291,37 @@ body {
 .route-path {
   stroke-dasharray: 10 10;
   animation: dash 1.2s linear infinite;
+}
+
+.trade-lane-pulse {
+  stroke: var(--color-accent);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 6 14;
+  filter: drop-shadow(0 0 4px rgba(232, 119, 34, 0.95));
+  animation: dash 2s linear infinite;
+}
+
+.trade-lane-signature {
+  stroke: #f4c430;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 7 12;
+  filter: drop-shadow(0 0 7px rgba(244, 196, 48, 0.95));
+  animation: dash 1.7s linear infinite;
+}
+
+.trade-ticker {
+  display: inline-block;
+  padding-left: 100%;
+  animation: ticker-scroll 30s linear infinite;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }

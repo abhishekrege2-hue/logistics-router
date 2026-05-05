@@ -9,11 +9,12 @@ import {
   Truck,
   Warehouse,
 } from "lucide-react";
+import { ROUTING_LOCATIONS } from "@/lib/hubs";
 
 const FAQ_ITEMS = [
   {
     q: "What is a tracking number, and where can I find it?",
-    a: "[Content to be filled in.]",
+    a: "A tracking number is a unique 10-character shipment identifier assigned when your parcel is booked. You can find it in your shipment confirmation email, shipping label, SMS updates, or in your sender account portal. Enter it exactly as shared so the system can retrieve the latest milestone scans.",
   },
   {
     q: "When will my tracking information appear?",
@@ -30,9 +31,46 @@ const FAQ_ITEMS = [
 ] as const;
 
 const VALIDATION_MESSAGE =
-  "Please enter a valid tracking reference (min. 5 characters).";
+  "Please enter a valid 10-character alphanumeric tracking reference.";
 
 type StepStatus = "completed" | "active" | "pending";
+
+type Hub = { label: string; weight: number };
+
+const ORIGIN_HUBS: Hub[] = [
+  { label: "Mumbai - BOM Gateway", weight: 28 },
+  { label: "Delhi - IGI Hub", weight: 24 },
+  { label: "Chennai - Port Terminal", weight: 18 },
+  { label: "Bengaluru - BLR Air Cargo", weight: 12 },
+  { label: "Hyderabad - HYD Logistics Zone", weight: 10 },
+  { label: "Kolkata - NSCBI Air Freight", weight: 8 },
+];
+
+const TRANSIT_HUBS: Hub[] = [
+  { label: "Dubai - DXB Logistics Park", weight: 22 },
+  { label: "Singapore - Tuas Port", weight: 20 },
+  { label: "Rotterdam - Europort", weight: 16 },
+  { label: "Frankfurt - Cargo City Süd", weight: 14 },
+  { label: "Hong Kong - Kwai Tsing Terminal", weight: 12 },
+  { label: "Doha - Hamad Air Hub", weight: 10 },
+  { label: "Istanbul - IST Cargo Terminal", weight: 6 },
+];
+
+function weightedPick(seed: number, options: Hub[]) {
+  const total = options.reduce((sum, item) => sum + item.weight, 0);
+  let cursor = ((seed % 9973) / 9973) * total;
+  for (const option of options) {
+    cursor -= option.weight;
+    if (cursor <= 0) return option.label;
+  }
+  return options[0]?.label ?? "Unknown gateway";
+}
+
+function hashTracking(value: string) {
+  let hash = 0;
+  for (const ch of value) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return hash;
+}
 
 function TimelineStep({
   icon: Icon,
@@ -99,26 +137,38 @@ function TimelineStep({
 
 export function TrackPageContent() {
   const [trackingId, setTrackingId] = useState("");
+  const [hubQuery, setHubQuery] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [showError, setShowError] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const v = trackingId.trim();
-    if (v.length < 5) {
+    const v = trackingId.trim().toUpperCase();
+    if (!/^[A-Z0-9]{10}$/.test(v)) {
       setShowError(true);
       setShowTimeline(false);
       return;
     }
+    setTrackingId(v);
     setShowError(false);
     setShowTimeline(true);
   };
 
   const onTrackingChange = (value: string) => {
-    setTrackingId(value);
-    if (showError && value.trim().length >= 5) setShowError(false);
+    const normalized = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    setTrackingId(normalized.slice(0, 10));
+    if (showError && /^[A-Z0-9]{10}$/.test(normalized)) setShowError(false);
   };
+
+  const trackingSeed = hashTracking(trackingId.trim());
+  const originLocation = weightedPick(trackingSeed + 13, ORIGIN_HUBS);
+  const processedLocation = weightedPick(trackingSeed + 37, ORIGIN_HUBS);
+  const departedLocation = weightedPick(trackingSeed + 71, TRANSIT_HUBS);
+  const destinationLocation = weightedPick(trackingSeed + 103, ORIGIN_HUBS);
+  const hubSuggestions = ROUTING_LOCATIONS.filter((city) =>
+    city.toLowerCase().includes(hubQuery.trim().toLowerCase()),
+  ).slice(0, 5);
 
   return (
     <>
@@ -159,7 +209,9 @@ export function TrackPageContent() {
               placeholder="Enter your tracking number"
               aria-invalid={showError}
               aria-describedby={showError ? "track-error" : undefined}
+              maxLength={10}
               className="input-control min-h-[44px] w-full flex-1 px-5 text-base font-medium md:min-h-[52px]"
+              style={showError ? { borderColor: "#dc2626" } : undefined}
             />
             <button
               type="submit"
@@ -178,6 +230,29 @@ export function TrackPageContent() {
               {VALIDATION_MESSAGE}
             </p>
           )}
+          <p className="mt-2 text-xs font-medium text-[color:var(--color-text-secondary)]">
+            *Example: 8823AX9910
+          </p>
+          <div className="mt-4 max-w-xl">
+            <label className="text-xs font-semibold text-[color:var(--color-text-secondary)]">
+              Global Hub Search
+            </label>
+            <input
+              value={hubQuery}
+              onChange={(e) => setHubQuery(e.target.value)}
+              placeholder="Type a city, port, or airport (e.g. L)"
+              className="input-control mt-1 w-full px-3 py-2 text-sm"
+            />
+            {hubQuery.trim().length > 0 && (
+              <div className="surface-card mt-1 rounded-md border p-1">
+                {hubSuggestions.map((hub) => (
+                  <p key={hub} className="px-2 py-1 text-xs">
+                    {hub}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
 
           {showTimeline && (
             <div
@@ -203,28 +278,28 @@ export function TrackPageContent() {
                 <TimelineStep
                   icon={Package}
                   title="Order Received"
-                  detail="Today, 06:15 AM — Confirmed at origin gateway"
+                  detail={`Today, 06:15 AM — Confirmed at ${originLocation}`}
                   status="completed"
                   isLast={false}
                 />
                 <TimelineStep
                   icon={Warehouse}
                   title="Processed at Hub"
-                  detail="Today, 08:30 AM — Arrived at sorting facility"
+                  detail={`Today, 08:30 AM — Processed and sorted at ${processedLocation}`}
                   status="completed"
                   isLast={false}
                 />
                 <TimelineStep
                   icon={Truck}
                   title="In Transit"
-                  detail="Today, 11:45 AM — Departed regional hub; ETA next scan 4h"
+                  detail={`Today, 11:45 AM — Departed ${departedLocation}; ETA next scan 4h`}
                   status="active"
                   isLast={false}
                 />
                 <TimelineStep
                   icon={CheckCircle}
                   title="Out for Delivery"
-                  detail="Pending — Carrier will update when driver is assigned"
+                  detail={`Pending — Last-mile carrier assignment at ${destinationLocation}`}
                   status="pending"
                   isLast
                 />
@@ -266,9 +341,7 @@ export function TrackPageContent() {
                       onClick={() => setOpenIndex(open ? null : index)}
                       className="flex min-h-[44px] w-full items-center justify-between gap-4 py-4 text-left transition sm:py-5"
                       style={{
-                        backgroundColor: open
-                          ? "var(--color-faq-expanded-bg)"
-                          : "var(--color-surface)",
+                        backgroundColor: open ? "#f4f4f4" : "var(--color-surface)",
                       }}
                       aria-expanded={open}
                     >
@@ -289,12 +362,12 @@ export function TrackPageContent() {
                         className="border-t px-0 pb-5 pr-8 pt-0"
                         style={{
                           borderColor: "var(--color-border)",
-                          backgroundColor: "var(--color-faq-expanded-bg)",
+                          backgroundColor: "#f4f4f4",
                         }}
                       >
                         <p
-                          className="pl-0 text-sm leading-relaxed"
-                          style={{ color: "var(--color-text-secondary)" }}
+                          className="pl-0 text-sm font-semibold leading-relaxed"
+                          style={{ color: "var(--color-text-primary)" }}
                         >
                           {item.a}
                         </p>

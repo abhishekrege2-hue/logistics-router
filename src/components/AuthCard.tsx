@@ -2,23 +2,37 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Route, Mail, Lock, LogIn, UserPlus } from "lucide-react";
 import { BRAND_NAME } from "@/lib/brand";
+import { COUNTRY_OPTIONS } from "@/lib/countries";
+import { setAuthenticated } from "@/lib/auth";
 
 type AuthMode = "login" | "signup";
 
 const inputBase = "input-control mt-2 w-full px-4 py-2.5";
 
 export function AuthCard() {
+  const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [country, setCountry] = useState(COUNTRY_OPTIONS[0]?.code ?? "IN");
+  const [stateValue, setStateValue] = useState("");
+  const [pinCode, setPinCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => setIsSubmitting(false), 800);
+    setTimeout(() => {
+      setAuthenticated(true);
+      setIsSubmitting(false);
+      router.push("/dashboard");
+    }, 600);
   }
 
   return (
@@ -147,6 +161,92 @@ export function AuthCard() {
               </p>
             )}
           </div>
+          {mode === "signup" && (
+            <>
+              <div>
+                <label htmlFor="auth-phone" className="text-sm font-medium">
+                  Phone Number
+                </label>
+                <input
+                  id="auth-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  className={inputBase}
+                />
+              </div>
+              <div>
+                <label htmlFor="auth-address1" className="text-sm font-medium">
+                  Address Line 1
+                </label>
+                <input
+                  id="auth-address1"
+                  type="text"
+                  value={address1}
+                  onChange={(e) => setAddress1(e.target.value)}
+                  required
+                  className={inputBase}
+                />
+              </div>
+              <div>
+                <label htmlFor="auth-address2" className="text-sm font-medium">
+                  Address Line 2
+                </label>
+                <input
+                  id="auth-address2"
+                  type="text"
+                  value={address2}
+                  onChange={(e) => setAddress2(e.target.value)}
+                  className={inputBase}
+                />
+              </div>
+              <div>
+                <label htmlFor="auth-country" className="text-sm font-medium">
+                  Country
+                </label>
+                <select
+                  id="auth-country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className={inputBase}
+                  required
+                >
+                  {COUNTRY_OPTIONS.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.flag} {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="auth-state" className="text-sm font-medium">
+                  State
+                </label>
+                <input
+                  id="auth-state"
+                  type="text"
+                  value={stateValue}
+                  onChange={(e) => setStateValue(e.target.value)}
+                  required
+                  className={inputBase}
+                />
+              </div>
+              <div>
+                <label htmlFor="auth-pin" className="text-sm font-medium">
+                  PIN Code
+                </label>
+                <input
+                  id="auth-pin"
+                  type="text"
+                  value={pinCode}
+                  onChange={(e) => setPinCode(e.target.value)}
+                  required
+                  className={inputBase}
+                />
+              </div>
+            </>
+          )}
           <button
             type="submit"
             disabled={isSubmitting}

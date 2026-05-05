@@ -31,7 +31,7 @@ export function RequestDemoForm() {
           className="text-lg font-semibold"
           style={{ color: "var(--color-text-primary)" }}
         >
-          Thank you. A Logistics Router representative will contact you shortly.
+          Thank you. A Meridian SCM representative will contact you shortly.
         </p>
       </div>
     );

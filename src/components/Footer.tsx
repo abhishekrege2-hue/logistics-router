@@ -143,7 +143,7 @@ export function Footer() {
               ))}
             </div>
             <p className="text-sm text-white">
-              © 2026 {BRAND_NAME} - All rights reserved.
+              © 2026 {BRAND_NAME} | Developed by Abhishek Rege
             </p>
           </div>
         </div>

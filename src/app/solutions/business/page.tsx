@@ -1,0 +1,69 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { PageShell } from "@/components/layout/PageShell";
+import { BRAND_NAME } from "@/lib/brand";
+
+export const metadata: Metadata = {
+  title: `Business Solutions | ${BRAND_NAME}`,
+  description: `Scalable logistics solutions for SMEs from ${BRAND_NAME}.`,
+};
+
+export default function BusinessSolutionsPage() {
+  return (
+    <PageShell>
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="relative mb-8 h-56 overflow-hidden rounded-lg sm:h-72">
+          <Image
+            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=1600&auto=format&fit=crop"
+            alt="Small business logistics fulfillment and team operations"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 1200px"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(26,43,74,0.84),rgba(26,43,74,0.32))]" />
+        </section>
+        <h1 className="border-l-4 pl-4 text-3xl font-bold text-[color:var(--color-primary)] sm:text-4xl">
+          Explore Business Solutions
+        </h1>
+        <p className="mt-3 text-sm font-medium text-[color:var(--color-text-secondary)]">
+          SME empowerment through enterprise-grade logistics capability.
+        </p>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <article className="surface-card rounded-lg border-t-4 p-5" style={{ borderTopColor: "var(--color-accent)" }}>
+            <h2 className="text-lg font-bold text-[color:var(--color-primary)]">The Challenge</h2>
+            <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+              Growing businesses often outpace their logistics stack, leading to unreliable delivery promises, manual operations, and constrained expansion.
+            </p>
+            <ul className="mt-3 space-y-1 text-sm font-medium text-[color:var(--color-text-primary)]">
+              <li>• Limited network reach</li>
+              <li>• Manual shipping workflows</li>
+              <li>• Low visibility into shipment health</li>
+            </ul>
+          </article>
+          <article className="surface-card rounded-lg border-t-4 p-5" style={{ borderTopColor: "var(--color-accent)" }}>
+            <h2 className="text-lg font-bold text-[color:var(--color-primary)]">The Solution</h2>
+            <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+              Meridian SCM democratizes enterprise logistics tools for SMEs, combining rapid integration, scalable execution, and global lane access in one operating model.
+            </p>
+            <ul className="mt-3 space-y-1 text-sm font-medium text-[color:var(--color-text-primary)]">
+              <li>• API and portal-first onboarding</li>
+              <li>• Flexible service tiers by growth stage</li>
+              <li>• Unified visibility and exception alerts</li>
+            </ul>
+          </article>
+          <article className="surface-card rounded-lg border-t-4 p-5" style={{ borderTopColor: "var(--color-accent)" }}>
+            <h2 className="text-lg font-bold text-[color:var(--color-primary)]">The Result</h2>
+            <p className="mt-2 text-sm text-[color:var(--color-text-secondary)]">
+              Enterprise-grade logistics capability, delivered with startup agility, helps SMEs expand faster, serve better, and scale with confidence.
+            </p>
+            <ul className="mt-3 space-y-1 text-sm font-medium text-[color:var(--color-text-primary)]">
+              <li>• Accelerated regional and global expansion</li>
+              <li>• More predictable delivery performance</li>
+              <li>• Stronger customer retention and repeat demand</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </PageShell>
+  );
+}
