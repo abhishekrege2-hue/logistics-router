@@ -2,6 +2,7 @@
 
 import { geoMercator, geoPath, type GeoProjection } from "d3-geo";
 import type { Feature, Geometry } from "geojson";
+import type { GeometryObject, Topology } from "topojson-specification";
 import { feature } from "topojson-client";
 import { useEffect, useMemo, useState } from "react";
 
@@ -31,6 +32,8 @@ interface LabelStyle {
   dy?: number;
   textAnchor?: "start" | "middle" | "end";
 }
+
+type CountriesTopology = Topology<{ countries: GeometryObject }>;
 
 const HUBS: HubNode[] = [
   { city: "Pune", code: "PNQ", lon: 73.8567, lat: 18.5204, timezone: "Asia/Kolkata", signature: true },
@@ -172,10 +175,9 @@ export function GlobalTradeWebMap({ heightClassName = "h-[28rem]" }: Props) {
       .then((res) => res.json())
       .then((topology) => {
         if (!active) return;
-        const topologyObj = topology as { objects: { countries: object } };
-        const geo = feature(topologyObj as object, topologyObj.objects.countries);
-        const features = (geo as { features?: Feature<Geometry>[] }).features ?? [];
-        setCountries(features);
+        const topologyObj = topology as CountriesTopology;
+        const geo = feature(topologyObj, topologyObj.objects.countries);
+        setCountries("features" in geo ? (geo.features as Feature<Geometry>[]) : []);
       })
       .catch(() => setCountries([]));
     return () => {
