@@ -1,12 +1,50 @@
-import type { ReactNode } from "react";
+import * as React from "react";
+import { cn } from "./utils";
 
-interface CardProps {
-  children: ReactNode;
-  className?: string;
+export function Card({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
-export function Card({ children, className = "" }: CardProps) {
+export function CardHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex flex-col gap-1 p-5", className)} {...props} />;
+}
+
+export function CardTitle({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <div className={`surface-card rounded-lg ${className}`}>{children}</div>
+    <h3
+      className={cn("text-sm font-semibold text-slate-900 dark:text-slate-100", className)}
+      {...props}
+    />
   );
+}
+
+export function CardDescription({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+  return <p className={cn("text-xs text-slate-600 dark:text-slate-300", className)} {...props} />;
+}
+
+export function CardContent({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("p-5 pt-0", className)} {...props} />;
 }
