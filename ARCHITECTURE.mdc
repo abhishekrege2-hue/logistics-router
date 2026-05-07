@@ -1,0 +1,24 @@
+# Meridian SCM — Architecture Overview (CQRS + Event Sourcing)
+
+## Intent
+Meridian SCM is an enterprise logistics platform designed around:
+- **CQRS**: write-side "commands" append immutable domain events; read-side "queries" serve denormalized projections.
+- **Event Sourcing**: shipment lifecycle is the source of truth in an append-only ledger.
+
+## Key building blocks
+- **Supabase Postgres**
+  - `public.events`: append-only event store (shipment lifecycle + compliance events)
+  - `public.shipment_projection`: read model updated via DB trigger after event inserts
+- **Next.js API routes**
+  - `POST /api/commands/shipment`: command handler that appends events (service role)
+  - `GET /api/queries/dashboard`: query handler that reads projection (service role for server)
+
+## Security model (baseline)
+- RLS enabled on ledger tables.
+- **Service role** (server-only) performs ledger writes/reads.
+- Authenticated users may read `shipment_projection` directly (optional); events remain server-only.
+
+## Extension points
+- **Agentic intervention engine**: reads projections + heuristics, appends intervention events, emits webhooks.
+- **EU Digital Product Passport (DPP)**: separate registry tables for ESPR compliance, linked to shipment aggregates.
+

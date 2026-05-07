@@ -1,0 +1,25 @@
+# Meridian SCM — Architectural Decisions Log
+
+## ADR-0001: Event store + projection trigger (Supabase)
+- **Decision**: Store immutable shipment events in `public.events` and maintain a query-optimized `public.shipment_projection` table updated by a trigger.
+- **Why**: Simple, auditable event sourcing with fast dashboard queries.
+- **Trade-offs**: Trigger logic must remain deterministic and backward compatible with older events.
+
+## ADR-0002: Server-only service role for writes
+- **Decision**: Command endpoints use Supabase service role (server-only env var) to bypass RLS.
+- **Why**: Prevent client-side tampering; centralize validation and write semantics.
+- **Trade-offs**: Requires secure env management and avoids exposing service role key.
+
+## ADR-0003: DPP as separate bounded context
+- **Decision**: Model EU DPP records in dedicated tables (`product_passports`, `dpp_lifecycle_events`).
+- **Why**: Different lifecycle, regulatory retention, and audit requirements vs shipment events.
+
+## ADR-0004: Stripe Payment Intents for SCA/3DS2
+- **Decision**: Use Stripe **Payment Intents** with `automatic_payment_methods` enabled; embed **Stripe Elements** in a linear checkout.
+- **Why**: Native PSD2/SCA compliance (3DS2) with minimal checkout friction and strong security boundaries.
+- **Trade-offs**: Requires server-side intent creation and careful metadata/audit logging.
+
+## ADR-0005: Transactions table for audit + billing portal
+- **Decision**: Persist `transactions` in Supabase (user-scoped with RLS) to power the billing portal.
+- **Why**: Auditable B2B invoicing history independent of Stripe dashboards; supports disputes and internal reconciliation.
+

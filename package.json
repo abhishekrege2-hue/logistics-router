@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
+    "@stripe/react-stripe-js": "^6.3.0",
+    "@stripe/stripe-js": "^9.4.0",
     "@supabase/supabase-js": "^2.105.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -23,6 +25,7 @@
     "react-leaflet": "^5.0.0",
     "react-simple-maps": "^3.0.0",
     "recharts": "^3.8.1",
+    "stripe": "^22.1.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
     "topojson-client": "^3.1.0"
@@ -38,7 +41,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
     "tsx": "^4.20.5",
     "typescript": "^5"
   }
