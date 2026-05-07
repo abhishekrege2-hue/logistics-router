@@ -4,6 +4,10 @@ import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
+function isString(x: unknown): x is string {
+  return typeof x === "string" && x.trim().length > 0;
+}
+
 export async function POST(req: Request) {
   const supabase = getSupabaseAdminClient();
   if (!supabase) {
@@ -22,6 +26,17 @@ export async function POST(req: Request) {
 
   const cmd = body as Partial<ShipmentCommand>;
   if (!cmd.type) return NextResponse.json({ error: "Missing command type" }, { status: 400 });
+
+  if (cmd.type === "CreateShipment") {
+    const raw = body as Record<string, unknown>;
+    const ok =
+      isString(raw.reference) &&
+      isString(raw.origin) &&
+      isString(raw.destination) &&
+      isString(raw.mode) &&
+      isString(raw.incoterm);
+    if (!ok) return NextResponse.json({ error: "Invalid CreateShipment payload" }, { status: 400 });
+  }
 
   const events = commandToEvents(cmd as ShipmentCommand);
 
