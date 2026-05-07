@@ -5,51 +5,51 @@ import Link from "next/link";
 import { BRAND_NAME } from "@/lib/brand";
 
 const quickLinks: Array<{ label: string; href: string }> = [
-  { label: "Customer Service", href: "/customer-service" },
-  { label: "Customer Portal Logins", href: "/customer-portal" },
-  { label: "Developer Portal", href: "/developer-portal" },
-  { label: "Get a Quote", href: "/get-a-quote" },
-  { label: "Request a Business Account", href: "/business-account" },
-  { label: "For Your Business", href: "/for-your-business" },
-  { label: "Shipping Guidance", href: "/shipping-guidance" },
+  { label: "Customer Service", href: "/quick-links/customer-service" },
+  { label: "Customer Portal Logins", href: "/quick-links/customer-portal-logins" },
+  { label: "Developer Portal", href: "/quick-links/developer-portal" },
+  { label: "Get a Quote", href: "/quick-links/get-a-quote" },
+  { label: "Request a Business Account", href: "/quick-links/request-a-business-account" },
+  { label: "For Your Business", href: "/quick-links/for-your-business" },
+  { label: "Shipping Guidance", href: "/quick-links/shipping-guidance" },
 ];
 
 const divisions: Array<{ label: string; href: string }> = [
-  { label: "Express", href: "/services/express" },
-  { label: "Global Forwarding", href: "/services/forwarding" },
-  { label: "Supply Chain", href: "/services/3pl" },
-  { label: "Other Global Divisions", href: "/divisions" },
+  { label: "Express", href: "/divisions/express" },
+  { label: "Global Forwarding", href: "/divisions/global-forwarding" },
+  { label: "Supply Chain", href: "/divisions/supply-chain" },
+  { label: "Other Global Divisions", href: "/divisions/other-global-divisions" },
 ];
 
 const sectors: Array<{ label: string; href: string }> = [
-  { label: "Auto-Mobility", href: "/sectors/auto-mobility" },
-  { label: "Energy", href: "/sectors/energy" },
-  { label: "Engineering & Manufacturing", href: "/sectors/engineering-manufacturing" },
-  { label: "Life Sciences & Healthcare", href: "/sectors/life-sciences-healthcare" },
-  { label: "Retail & Fashion", href: "/sectors/retail-fashion" },
-  { label: "Technology", href: "/sectors/technology" },
+  { label: "Auto-Mobility", href: "/industry-sectors/auto-mobility" },
+  { label: "Energy", href: "/industry-sectors/energy" },
+  { label: "Engineering & Manufacturing", href: "/industry-sectors/engineering-manufacturing" },
+  { label: "Life Sciences & Healthcare", href: "/industry-sectors/life-sciences-healthcare" },
+  { label: "Retail & Fashion", href: "/industry-sectors/retail-fashion" },
+  { label: "Technology", href: "/industry-sectors/technology" },
 ];
 
 const companyInfo: Array<{ label: string; href: string }> = [
-  { label: "About Us", href: "/about" },
-  { label: "Delivered", href: "/delivered" },
-  { label: "Careers", href: "/careers" },
-  { label: "Press Center", href: "/press-center" },
-  { label: "Investors", href: "/investors" },
-  { label: "Sustainability", href: "/sustainability" },
-  { label: "CSR Policy in India", href: "/csr-india" },
-  { label: "Innovation", href: "/innovation" },
-  { label: "Events", href: "/events" },
-  { label: "Brand Partnerships", href: "/brand-partnerships" },
+  { label: "About Us", href: "/company-info/about-us" },
+  { label: "Delivered", href: "/company-info/delivered" },
+  { label: "Careers", href: "/company-info/careers" },
+  { label: "Press Center", href: "/company-info/press-center" },
+  { label: "Investors", href: "/company-info/investors" },
+  { label: "Sustainability", href: "/company-info/sustainability" },
+  { label: "CSR Policy in India", href: "/company-info/csr-policy-in-india" },
+  { label: "Innovation", href: "/company-info/innovation" },
+  { label: "Events", href: "/company-info/events" },
+  { label: "Brand Partnerships", href: "/company-info/brand-partnerships" },
 ];
 
 const legal: Array<{ label: string; href: string }> = [
-  { label: "Fraud Awareness", href: "/fraud-awareness" },
-  { label: "Legal Notice", href: "/legal" },
-  { label: "Terms of Use", href: "/terms" },
-  { label: "Privacy Notes", href: "/privacy" },
-  { label: "Additional Info", href: "/additional-info" },
-  { label: "Cookie Settings", href: "/cookie-settings" },
+  { label: "Fraud Awareness", href: "/legal/fraud-awareness" },
+  { label: "Legal Notice", href: "/legal/legal-notice" },
+  { label: "Terms of Use", href: "/legal/terms-of-use" },
+  { label: "Privacy Notes", href: "/legal/privacy-notes" },
+  { label: "Additional Info", href: "/legal/additional-info" },
+  { label: "Cookie Settings", href: "/legal/cookie-settings" },
 ];
 
 export function Footer() {
